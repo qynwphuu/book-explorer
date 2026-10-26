@@ -7,24 +7,29 @@ import {
   FlatList,
   StyleSheet,
 } from "react-native";
-import { MOCK_BOOKS, BookItem } from "../services/booksApi";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { searchBooks } from "../services/booksApi";
 
 export default function SearchScreen() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<BookItem[]>([]);
+  const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSearch = () => {
+  async function handleSearch() {
     if (!query.trim()) return;
-
-    const filtered = MOCK_BOOKS.filter((b) =>
-      b.title.toLowerCase().includes(query.toLowerCase()),
-    );
-    setResults(filtered.length > 0 ? filtered : MOCK_BOOKS);
-  };
+    setLoading(true);
+    setError("");
+    try {
+      const books = await searchBooks(query);
+      setResults(books);
+    } catch (e: any) {
+      setError(e.message);
+    }
+    setLoading(false);
+  }
 
   return (
-  <SafeAreaProvider>
     <SafeAreaView style={styles.container}>
       <View style={styles.searchRow}>
         <TextInput
@@ -36,21 +41,25 @@ export default function SearchScreen() {
         <Button title="Search" onPress={handleSearch} />
       </View>
 
+      {loading && <Text>Loading...</Text>}
+      {error !== "" && <Text>{error}</Text>}
+
       <FlatList
         data={results}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.key}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardAuthor}>{item.authors.join(", ")}</Text>
-            <Text numberOfLines={2} style={styles.cardDesc}>
-              {item.description}
+            <Text style={styles.cardAuthor}>
+              {item.author_name ? item.author_name.join(", ") : "Unknown author"}
+            </Text>
+            <Text style={styles.cardDesc}>
+              {item.first_publish_year ? `First published ${item.first_publish_year}` : ""}
             </Text>
           </View>
         )}
       />
     </SafeAreaView>
-  </SafeAreaProvider>
   );
 }
 
@@ -66,13 +75,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginRight: 8,
   },
-  button: {
-    backgroundColor: "#007AFF",
-    paddingHorizontal: 16,
-    justifyContent: "center",
-    borderRadius: 8,
-  },
-  buttonText: { color: "#fff", fontWeight: "bold" },
   card: {
     backgroundColor: "#fff",
     padding: 16,

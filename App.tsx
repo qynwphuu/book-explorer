@@ -1,9 +1,16 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { View, Text, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Button,
+  FlatList,
+} from "react-native";
+import { searchBooks } from "./src/services/booksApi";
 
 function HomeScreen() {
   return (
@@ -15,10 +22,39 @@ function HomeScreen() {
 }
 
 function SearchScreen() {
+  const [query, setQuery] = useState("");
+  const [books, setBooks] = useState<any[]>([]);
+  const [error, setError] = useState("");
+
+  async function handleSearch() {
+    setError("");
+    try {
+      const results = await searchBooks(query);
+      setBooks(results);
+    } catch (e: any) {
+      setError(e.message);
+    }
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Search Books</Text>
-      <Text>Search functionality coming next.</Text>
+    <View style={{ flex: 1, padding: 20 }}>
+      <TextInput
+        placeholder="Search books"
+        value={query}
+        onChangeText={setQuery}
+        style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
+      />
+      <Button title="Search" onPress={handleSearch} />
+      {error !== "" && <Text>{error}</Text>}
+      <FlatList
+        data={books}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => (
+          <Text>
+            {item.title} {item.author_name ? `by ${item.author_name[0]}` : ""}
+          </Text>
+        )}
+      />
     </View>
   );
 }
