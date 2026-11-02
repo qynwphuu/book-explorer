@@ -25,3 +25,18 @@ export async function getTrendingBooks() {
   const data = await response.json();
   return data.works ?? [];
 }
+
+export async function getBookDescription(key: string) {
+  const response = await fetch(`https://openlibrary.org${key}.json?limit=1`);
+  if (!response.ok) {
+    throw new Error("Could not load the description.");
+  }
+  const data = await response.json();
+
+  console.log("DESCRIPTION RAW:", data.description); // to check what comes back
+
+  // Open Library returns either a plain string or an object like { value: "..." }
+  if (typeof data.description === "string") return data.description;
+  if (data.description?.value) return data.description.value;
+  return "";
+}
