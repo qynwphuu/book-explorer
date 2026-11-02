@@ -18,7 +18,7 @@ export async function searchBooks(query: string) {
 }
 
 export async function getTrendingBooks() {
-  const response = await fetch("https://openlibrary.org/trending/weekly.json?limit=10");
+  const response = await fetch("https://openlibrary.org/trending/weekly.json?limit=15");
   if (!response.ok) {
     throw new Error("Could not load popular books.");
   }
