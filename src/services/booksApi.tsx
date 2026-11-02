@@ -16,3 +16,12 @@ export async function searchBooks(query: string) {
   const data = await response.json();
   return data.docs ?? [];
 }
+
+export async function getTrendingBooks() {
+  const response = await fetch("https://openlibrary.org/trending/weekly.json?limit=10");
+  if (!response.ok) {
+    throw new Error("Could not load popular books.");
+  }
+  const data = await response.json();
+  return data.works ?? [];
+}
