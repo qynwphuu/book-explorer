@@ -18,7 +18,7 @@ export async function searchBooks(query: string) {
 }
 
 export async function getTrendingBooks() {
-  const response = await fetch("https://openlibrary.org/trending/weekly.json?limit=15");
+  const response = await fetch("https://openlibrary.org/trending/weekly.json?limit=20");
   if (!response.ok) {
     throw new Error("Could not load popular books.");
   }
@@ -32,8 +32,6 @@ export async function getBookDescription(key: string) {
     throw new Error("Could not load the description.");
   }
   const data = await response.json();
-
-  console.log("DESCRIPTION RAW:", data.description); // to check what comes back
 
   // Open Library returns either a plain string or an object like { value: "..." }
   if (typeof data.description === "string") return data.description;

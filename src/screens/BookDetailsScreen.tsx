@@ -8,15 +8,15 @@ import {
   ScrollView,
 } from "react-native";
 import { getBookDescription } from "../services/booksApi";
+import { saveBook } from "../database/database";
 
 export default function BookDetailsScreen({ route }: any) {
   const book = route.params.book;
   const [saved, setSaved] = useState(false);
   const [description, setDescription] = useState("");
   const [expanded, setExpanded] = useState(false);
-  const [needsToggle, setNeedsToggle] = useState(false);
 
-  const showToggle = description.length > 400;
+  const showToggle = description.length > 500;
 
   useEffect(() => {
     getBookDescription(book.key)
@@ -44,7 +44,16 @@ export default function BookDetailsScreen({ route }: any) {
         First published in {book.first_publish_year ?? "unknown year"}
       </Text>
 
-      <Text numberOfLines={expanded ? undefined : 6} style={{ marginTop: 5 }}>
+      <Button
+        title={saved ? "Saved!" : "Save to library"}
+        onPress={async () => {
+          await saveBook(book);
+          setSaved(true);
+        }}
+        disabled={saved}
+      />
+
+      <Text numberOfLines={expanded ? undefined : 14} style={{ marginTop: 5 }}>
         {description || "No description available."}
       </Text>
       {showToggle && (
@@ -67,6 +76,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   author: { fontSize: 16, marginBottom: 8, textAlign: "center" },
-  description: { fontSize: 14, marginVertical: 2, textAlign: "center" },
-  details: { fontSize: 14, marginBottom: 10, textAlign: "center" },
+  details: { fontSize: 14, marginBottom: 1, textAlign: "center" },
 });
