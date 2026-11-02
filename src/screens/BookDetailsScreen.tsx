@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Button, ScrollView } from "react-native";
 import { getBookDescription } from "../services/booksApi";
 
 export default function BookDetailsScreen({ route }: any) {
   const book = route.params.book;
   const [saved, setSaved] = useState(false);
   const [description, setDescription] = useState("");
+  const [expanded, setExpanded] = useState(false);
+  const [needsToggle, setNeedsToggle] = useState(false);
+
+  const showToggle = description.length > 400;
 
   useEffect(() => {
     getBookDescription(book.key)
@@ -14,7 +18,7 @@ export default function BookDetailsScreen({ route }: any) {
   }, []);
 
   return (
-    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
       {book.cover_i && (
         <Image
           source={{
@@ -24,21 +28,33 @@ export default function BookDetailsScreen({ route }: any) {
         />
       )}
       <Text style={styles.title}>{book.title}</Text>
+
       <Text style={styles.author}>
         {book.author_name ? `by ${book.author_name[0]}` : "Author unknown"}
       </Text>
-      <Text style={{ marginVertical: 12 }}>
+
+      <Text
+        numberOfLines={expanded ? undefined : 6}
+        style={{ marginVertical: 12 }}
+      >
         {description || "No description available."}
       </Text>
+      {showToggle && (
+        <Button
+          title={expanded ? "Show less" : "Read more"}
+          onPress={() => setExpanded(!expanded)}
+        />
+      )}
+
       <Text style={styles.details}>
         First published in {book.first_publish_year ?? "unknown year"}
       </Text>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", padding: 20 },
+  container: { alignItems: "center", padding: 20 },
   cover: { width: 160, height: 240, marginBottom: 16 },
   title: {
     fontSize: 22,
