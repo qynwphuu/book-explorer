@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Button,
   ScrollView,
+  Linking,
 } from "react-native";
 import { getBookDescription } from "../services/booksApi";
 import { saveBook } from "../database/database";
@@ -43,6 +44,11 @@ export default function BookDetailsScreen({ route }: any) {
       <Text style={styles.details}>
         First published in {book.first_publish_year ?? "unknown year"}
       </Text>
+
+      <Button
+        title="Read online"
+        onPress={() => Linking.openURL(`https://openlibrary.org${book.key}`)}
+      />
 
       <Button
         title={saved ? "Saved!" : "Save to library"}
