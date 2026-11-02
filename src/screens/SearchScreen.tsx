@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, FlatList } from "react-native";
+import { View, Text, TextInput, Button, FlatList, TouchableOpacity } from "react-native";
 import { searchBooks } from "../services/booksApi";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SearchScreen() {
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState<any[]>([]);
   const [error, setError] = useState("");
+
+  const navigation = useNavigation<any>();
 
   async function handleSearch() {
     setError("");
@@ -31,9 +34,13 @@ export default function SearchScreen() {
         data={books}
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => (
-          <Text>
-            {item.title} {item.author_name ? `by ${item.author_name[0]}` : ""}
-          </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("BookDetails", { book: item })}
+          >
+            <Text style={{ paddingVertical: 8 }}>
+              {item.title} {item.author_name ? `by ${item.author_name[0]}` : ""}
+            </Text>
+          </TouchableOpacity>
         )}
       />
     </View>

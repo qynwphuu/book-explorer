@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { getTrendingBooks } from "../services/booksApi";
+import { useNavigation } from "@react-navigation/native";
 
 export default function HomeScreen() {
   const [books, setBooks] = useState<any[]>([]);
   const [error, setError] = useState("");
+
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
     getTrendingBooks()
@@ -20,9 +29,13 @@ export default function HomeScreen() {
         data={books}
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => (
-          <Text>
-            {item.title} {item.author_name ? `by ${item.author_name[0]}` : ""}
-          </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("BookDetails", { book: item })}
+          >
+            <Text style={{ paddingVertical: 8 }}>
+              {item.title} {item.author_name ? `by ${item.author_name[0]}` : ""}
+            </Text>
+          </TouchableOpacity>
         )}
       />
     </View>
