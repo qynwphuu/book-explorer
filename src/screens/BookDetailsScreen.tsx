@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, Button, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Button,
+  ScrollView,
+} from "react-native";
 import { getBookDescription } from "../services/booksApi";
 
 export default function BookDetailsScreen({ route }: any) {
@@ -18,7 +25,7 @@ export default function BookDetailsScreen({ route }: any) {
   }, []);
 
   return (
-      <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {book.cover_i && (
         <Image
           source={{
@@ -33,10 +40,11 @@ export default function BookDetailsScreen({ route }: any) {
         {book.author_name ? `by ${book.author_name[0]}` : "Author unknown"}
       </Text>
 
-      <Text
-        numberOfLines={expanded ? undefined : 6}
-        style={{ marginVertical: 12 }}
-      >
+      <Text style={styles.details}>
+        First published in {book.first_publish_year ?? "unknown year"}
+      </Text>
+
+      <Text numberOfLines={expanded ? undefined : 6} style={{ marginTop: 5 }}>
         {description || "No description available."}
       </Text>
       {showToggle && (
@@ -45,10 +53,6 @@ export default function BookDetailsScreen({ route }: any) {
           onPress={() => setExpanded(!expanded)}
         />
       )}
-
-      <Text style={styles.details}>
-        First published in {book.first_publish_year ?? "unknown year"}
-      </Text>
     </ScrollView>
   );
 }
@@ -63,6 +67,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   author: { fontSize: 16, marginBottom: 8, textAlign: "center" },
-  description: { fontSize: 14, marginBottom: 8, textAlign: "center" },
-  details: { fontSize: 14, textAlign: "center" },
+  description: { fontSize: 14, marginVertical: 2, textAlign: "center" },
+  details: { fontSize: 14, marginBottom: 10, textAlign: "center" },
 });
