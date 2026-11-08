@@ -54,6 +54,7 @@ export default function LibraryScreen() {
         keyExtractor={(item) => item.key}
         numColumns={3}
         columnWrapperStyle={{ gap: 12 }}
+        style={{ marginTop: 20 }}
         renderItem={({ item }) => (
           <BookCard
             book={toBook(item)}
@@ -68,6 +69,6 @@ export default function LibraryScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: colors.background },
-  title: { fontSize: 28, fontWeight: "bold", color: colors.text, marginBottom: 18 },
-  count: { color: colors.mutedText, marginTop: 4, marginBottom: 16, fontSize: 12 },
+  title: { fontSize: 28, fontWeight: "bold", color: colors.text, marginBottom: 25 },
+  count: { color: colors.mutedText, fontSize: 12 },
 });
