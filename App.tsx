@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 
 function Tabs() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={{ headerShown: false, tabBarActiveTintColor: "#b45f06" }}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="My Library" component={LibraryScreen} />
@@ -26,7 +26,11 @@ export default function App() {
     <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Tabs"
+            component={Tabs}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen
             name="BookDetails"
             component={BookDetailsScreen}

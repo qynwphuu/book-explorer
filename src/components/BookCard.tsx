@@ -3,7 +3,9 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../theme";
 
-export default function BookCard({ book, width = 150 }: { book: any; width?: number }) {
+type Props = { book: any; width?: number; onLongPress?: () => void };
+
+export default function BookCard({ book, width = 110, onLongPress }: Props) {
   const navigation = useNavigation<any>();
   const coverStyle = { width, height: width * 1.5 };
 
@@ -11,6 +13,7 @@ export default function BookCard({ book, width = 150 }: { book: any; width?: num
     <TouchableOpacity
       style={{ width, marginBottom: 16 }}
       onPress={() => navigation.navigate("BookDetails", { book })}
+      onLongPress={onLongPress}
     >
       {book.cover_i ? (
         <Image
