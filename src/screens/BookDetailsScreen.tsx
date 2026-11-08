@@ -105,6 +105,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
   },
-  description: { alignSelf: "stretch", lineHeight: 22, marginTop: 4 },
+  description: { alignSelf: "stretch", lineHeight: 22, marginTop: 4, marginBottom: 10, color: colors.text },
   buttons: { alignSelf: "stretch", marginTop: 16, gap: 8 },
 });
