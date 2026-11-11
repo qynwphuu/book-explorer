@@ -1,13 +1,15 @@
 export async function searchBooks(query: string) {
   const response = await fetch(
-    `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=20`
+    `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=20&fields=key,title,author_name,cover_i,first_publish_year,subject,ratings_average,number_of_pages_median,language`,
   );
 
   if (response.status === 429) {
     throw new Error("Too many searches. Please wait a bit and try again.");
   }
   if (response.status >= 500) {
-    throw new Error("Open Library is down right now. Try again in a few minutes.");
+    throw new Error(
+      "Open Library is down right now. Try again in a few minutes.",
+    );
   }
   if (!response.ok) {
     throw new Error("Something went wrong. Try again.");
@@ -18,7 +20,9 @@ export async function searchBooks(query: string) {
 }
 
 export async function getTrendingBooks() {
-  const response = await fetch("https://openlibrary.org/trending/weekly.json?limit=10");
+  const response = await fetch(
+    "https://openlibrary.org/trending/weekly.json?limit=10",
+  );
   if (!response.ok) {
     throw new Error("Could not load popular books.");
   }

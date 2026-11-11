@@ -103,7 +103,7 @@ export default function LibraryScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 20, backgroundColor: colors.background },
-  title: { fontSize: 28, fontWeight: "bold", color: colors.text },
+  title: { fontSize: 28, fontWeight: "bold", color: colors.text, marginBottom: 20 },
   count: { color: colors.mutedText, marginTop: 4, marginBottom: 12, fontSize: 12 },
   row: { flexDirection: "row", gap: 8, marginBottom: 8 },
   chip: {
