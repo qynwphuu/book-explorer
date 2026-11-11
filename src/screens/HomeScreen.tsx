@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getTrendingBooks } from "../services/booksApi";
@@ -10,11 +10,13 @@ export default function HomeScreen() {
   const navigation = useNavigation<any>();
   const [books, setBooks] = useState<any[]>([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getTrendingBooks()
       .then(setBooks)
-      .catch((e) => setError(e.message));
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
   }, []);
 
   const featured = books[0];
@@ -22,6 +24,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       {error !== "" && <Text>{error}</Text>}
+      {loading && <ActivityIndicator size="large" color={colors.accent} />}
 
       {featured && (
         <TouchableOpacity
