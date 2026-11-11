@@ -5,6 +5,7 @@ import {
   Button,
   FlatList,
   useWindowDimensions,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BookCard from "../components/BookCard";
@@ -15,24 +16,33 @@ export default function SearchScreen() {
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState<any[]>([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
 
   const { width } = useWindowDimensions();
   const cardWidth = (width - 40 - 16) / 2 - 10; // screen minus padding minus gap
 
   async function handleSearch() {
-    if (!query.trim()) return; // ignore empty searches
+    if (!query.trim()) return;
     setError("");
+    setLoading(true);
     try {
       const results = await searchBooks(query);
       setBooks(results);
+      setSearched(true);
     } catch (e: any) {
       setError(e.message);
     }
+    setLoading(false);
   }
 
   return (
     <SafeAreaView
-      style={{ flex: 1, paddingHorizontal: 20, backgroundColor: colors.background }}
+      style={{
+        flex: 1,
+        paddingHorizontal: 20,
+        backgroundColor: colors.background,
+      }}
       edges={["top"]}
     >
       <TextInput
@@ -43,7 +53,20 @@ export default function SearchScreen() {
       />
 
       <Button title="Search" color={colors.accent} onPress={handleSearch} />
+      
       {error !== "" && <Text>{error}</Text>}
+      {loading && (
+        <ActivityIndicator
+          size="large"
+          color={colors.accent}
+          style={{ marginTop: 20 }}
+        />
+      )}
+      {!loading && searched && books.length === 0 && error === "" && (
+        <Text style={{ textAlign: "center", marginTop: 20 }}>
+          No books found. Try a different title or author.
+        </Text>
+      )}
 
       <FlatList
         style={{ marginTop: 20 }}
