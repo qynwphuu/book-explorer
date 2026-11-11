@@ -42,3 +42,17 @@ export async function getBookDescription(key: string) {
   if (data.description?.value) return data.description.value;
   return "";
 }
+
+export async function getNewBooks() {
+  const response = await fetch(
+    `https://openlibrary.org/search.json?q=${encodeURIComponent(
+      "first_publish_year:[2025 TO 2026]"
+    )}&sort=new&limit=30&fields=key,title,author_name,cover_i,first_publish_year,subject,ratings_average,number_of_pages_median,language`
+  );
+  if (!response.ok) {
+    throw new Error("Could not load new books.");
+  }
+  const data = await response.json();
+  // keep only books with a cover, so the list looks good
+  return (data.docs ?? []).filter((b: any) => b.cover_i).slice(0, 6);
+}

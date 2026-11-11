@@ -11,14 +11,16 @@ import {
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getTrendingBooks } from "../services/booksApi";
+import { getTrendingBooks, getNewBooks } from "../services/booksApi";
 import { getSavedBooks } from "../database/database";
 import BookCard from "../components/BookCard";
+import BookRow from "../components/BookRow";
 import { colors } from "../theme";
 
 export default function HomeScreen() {
   const navigation = useNavigation<any>();
   const [books, setBooks] = useState<any[]>([]);
+  const [newBooks, setNewBooks] = useState<any[]>([]);
   const [reading, setReading] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -28,6 +30,9 @@ export default function HomeScreen() {
       .then(setBooks)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
+    getNewBooks()
+      .then(setNewBooks)
+      .catch(() => setNewBooks([]));
   }, []);
 
   // reload saved books every time the Home tab is opened
@@ -43,10 +48,10 @@ export default function HomeScreen() {
               author_name: r.author ? r.author.split(", ") : undefined,
               cover_i: r.cover_i,
               first_publish_year: r.year,
-            }))
-        )
+            })),
+        ),
       );
-    }, [])
+    }, []),
   );
 
   const featured = books[0];
@@ -60,7 +65,9 @@ export default function HomeScreen() {
         {featured && (
           <TouchableOpacity
             style={styles.banner}
-            onPress={() => navigation.navigate("BookDetails", { book: featured })}
+            onPress={() =>
+              navigation.navigate("BookDetails", { book: featured })
+            }
           >
             <View style={{ flex: 1, paddingRight: 12 }}>
               <Text style={styles.pill}>Popular</Text>
@@ -68,14 +75,20 @@ export default function HomeScreen() {
                 {featured.title}
               </Text>
               <Text style={styles.bannerAuthor}>
-                {featured.author_name ? featured.author_name[0] : "Unknown author"}
-                {featured.first_publish_year ? ` (${featured.first_publish_year})` : ""}
+                {featured.author_name
+                  ? featured.author_name[0]
+                  : "Unknown author"}
+                {featured.first_publish_year
+                  ? ` (${featured.first_publish_year})`
+                  : ""}
               </Text>
               <Text style={styles.readMore}>Read More...</Text>
             </View>
             {featured.cover_i && (
               <Image
-                source={{ uri: `https://covers.openlibrary.org/b/id/${featured.cover_i}-M.jpg` }}
+                source={{
+                  uri: `https://covers.openlibrary.org/b/id/${featured.cover_i}-M.jpg`,
+                }}
                 style={styles.bannerCover}
               />
             )}
@@ -113,13 +126,22 @@ export default function HomeScreen() {
             )}
           />
         )}
+
+        <Text style={styles.heading}>New publications</Text>
+        {newBooks.map((book) => (
+          <BookRow key={book.key} book={book} />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 20, backgroundColor: colors.background },
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: colors.background,
+  },
   banner: {
     flexDirection: "row",
     alignItems: "center",
@@ -142,6 +164,11 @@ const styles = StyleSheet.create({
   bannerAuthor: { color: colors.mutedText, marginTop: 4 },
   readMore: { color: colors.accent, fontWeight: "bold", marginTop: 8 },
   bannerCover: { width: 90, height: 135, borderRadius: 8 },
-  heading: { fontSize: 20, fontWeight: "bold", marginBottom: 12, color: colors.text },
+  heading: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 12,
+    color: colors.text,
+  },
   empty: { color: colors.mutedText, marginBottom: 24 },
 });
